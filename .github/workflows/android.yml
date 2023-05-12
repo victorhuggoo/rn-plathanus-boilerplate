@@ -18,8 +18,7 @@ jobs:
         run: yarn install
       - name: build android
         working-directory: ./android
-#         run: ./gradlew build
-        run: ls -la
+        run: ./gradlew build
       - name: ls
         working-directory: ./
         run: cd ./android/app/build/outputs/apk/debug && ls -la
