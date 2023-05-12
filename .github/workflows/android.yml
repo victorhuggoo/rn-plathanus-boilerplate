@@ -18,5 +18,8 @@ jobs:
         run: yarn install
       - name: build android
         working-directory: ./android
-        run: ./gradlew build
-      
+#         run: ./gradlew build
+        run: ls -la
+      - name: ls
+        working-directory: ./
+        run: ls -la
