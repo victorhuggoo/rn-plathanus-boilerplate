@@ -7,24 +7,72 @@ on:
     branches: [ "main" ]
     
 jobs:
-  build-gradle-project:
+  android-build:
+    name: Android Build
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository # clone the repo to local ci workspace
         uses: actions/checkout@v2
-#       - name: Set up our JDK environment # setup JDK environment: mandatory as we need to build  android project
-#         uses: actions/setup-java@v1.4.3
-      - name: install dependencies
-        run: yarn install
-      - name: build android
+
+      - name: Set up our JDK environment # setup JDK environment: mandatory as we need to build  android project
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 1.8
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Restore node_modules from cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile # install with --frozen-lockfile to make sure we will have the same packages version
+
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-
+
+      - name: Make Gradlew Executable
+        run: cd android && chmod +x ./gradlew
+
+      - name: Generate App APK
         working-directory: ./android
-        run: ./gradlew build
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Sign APK
+        id: sign_app
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: android/app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.ANDROID_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
       - name: ls
         working-directory: ./
-        run: cd ./android/app/build/outputs/apk/debug && ls -la
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-debug
-          path: ./android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 5
+        run: cd ./android/app/build/outputs/apk/release && ls -la
+
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: app-release
+      #     path: ./android/app/build/outputs/apk/debug/app-debug.apk
+      #     retention-days: 5
