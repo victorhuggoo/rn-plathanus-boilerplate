@@ -17,4 +17,6 @@ jobs:
         with:
             node-version: '16'
       - run: ./gradlew build
+      - working-directory: ./
+      - run: ls -la
       
