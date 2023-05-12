@@ -3,5 +3,15 @@
     "jsx": "react",
     "strict": true
   },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/**/*.ts",
+    "**/**/*.tsx",
+    "<path-to-your-source>.ts",
+    "<path-to-your-source>.tsx",
+  ],
   "extends": "expo/tsconfig.base"
 }
+
