@@ -15,5 +15,5 @@ jobs:
 #       - name: Set up our JDK environment # setup JDK environment: mandatory as we need to build  android project
 #         uses: actions/setup-java@v1.4.3
       - name: ls
-        run: ls -la
+        run: yarn install
       
