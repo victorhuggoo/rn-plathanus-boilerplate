@@ -9,14 +9,12 @@ on:
 jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./android
     steps:
       - uses: actions/checkout@v2
         with:
             node-version: '16'
-      - run: ./gradlew build
       - working-directory: ./
       - run: ls -la
+#       - run: ./gradlew build
+#       - working-directory: ./
       
