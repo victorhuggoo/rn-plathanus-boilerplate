@@ -22,4 +22,4 @@ jobs:
         run: ls -la
       - name: ls
         working-directory: ./
-        run: ls -la
+        run: cd ./android/app/build/outputs/apk/debug && ls -la
