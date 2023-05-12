@@ -1,10 +1,14 @@
 {
   "expo": {
+    "scheme": "rn-plathanus-boilerplate",
     "name": "rn-plathanus-boilerplate",
     "slug": "rn-plathanus-boilerplate",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "web": {
+      "bundler": "metro"
+    }
   }
 }
